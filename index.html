@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>SCP: 轮回</title>
     <style>
         body {
@@ -33,35 +33,38 @@
         const playerRightLeg = document.getElementById("playerRightLeg");
         const playerLeftLeg = document.getElementById("playerLeftLeg");
 
-        // 初始位置
-        let playerX = 300;
-        let playerY = 300;
-
-        function updatePosition() {
-            // 让身体在中心
-            playerBody.style.left = playerX + "px";
-            playerBody.style.top = playerY + "px";
-
-            // 计算各部位相对位置（基于锚点）
-            playerRightHand.style.left = (playerX + 14 - 20) + "px";
-            playerRightHand.style.top = (playerY + 13 - 25) + "px";
-
-            playerLeftHand.style.left = (playerX + 19 - 20) + "px";
-            playerLeftHand.style.top = (playerY + 13 - 25) + "px";
-
-            playerRightLeg.style.left = (playerX + 15 - 20) + "px";
-            playerRightLeg.style.top = (playerY + 20 - 25) + "px";
-
-            playerLeftLeg.style.left = (playerX + 18 - 20) + "px";
-            playerLeftLeg.style.top = (playerY + 20 - 25) + "px";
+        // 获取屏幕中心位置
+        function getScreenCenter() {
+            return {
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2
+            };
         }
 
-        // 监听点击事件
-        document.addEventListener("click", function(event) {
-            playerX = event.clientX - 20;
-            playerY = event.clientY - 25;
-            updatePosition();
-        });
+        function updatePosition() {
+            // 获取屏幕中心位置
+            const center = getScreenCenter();
+
+            // 让身体在中心
+            playerBody.style.left = (center.x - 20) + "px"; // 20 是 playerBody 宽度的一半
+            playerBody.style.top = (center.y - 25) + "px"; // 25 是 playerBody 高度的一半
+
+            // 计算各部位相对位置（基于锚点）
+            playerRightHand.style.left = (center.x + 14 - 20) + "px";
+            playerRightHand.style.top = (center.y + 13 - 25) + "px";
+
+            playerLeftHand.style.left = (center.x + 19 - 20) + "px";
+            playerLeftHand.style.top = (center.y + 13 - 25) + "px";
+
+            playerRightLeg.style.left = (center.x + 15 - 20) + "px";
+            playerRightLeg.style.top = (center.y + 20 - 25) + "px";
+
+            playerLeftLeg.style.left = (center.x + 18 - 20) + "px";
+            playerLeftLeg.style.top = (center.y + 20 - 25) + "px";
+        }
+
+        // 监听窗口大小变化事件
+        window.addEventListener("resize", updatePosition);
 
         // 初始化
         updatePosition();
