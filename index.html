@@ -10,119 +10,61 @@
             overflow: hidden;
             background-color: black;
         }
-        canvas {
-            display: block;
+        .player-part {
+            position: absolute;
+            width: 40px;  /* 设定玩家整体大小 */
+            height: 50px;
+            transition: top 0.5s linear, left 0.5s linear; /* 平滑移动 */
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
+    <!-- 玩家身体和四肢 -->
+    <img id="playerBody" class="player-part" src="play_body.png" alt="Player Body">
+    <img id="playerRightHand" class="player-part" src="player_righthand.png" alt="Right Hand">
+    <img id="playerLeftHand" class="player-part" src="player_lefthand.png" alt="Left Hand">
+    <img id="playerRightLeg" class="player-part" src="player_rightleg.png" alt="Right Leg">
+    <img id="playerLeftLeg" class="player-part" src="player_leftleg.png" alt="Left Leg">
 
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+        const playerBody = document.getElementById("playerBody");
+        const playerRightHand = document.getElementById("playerRightHand");
+        const playerLeftHand = document.getElementById("playerLeftHand");
+        const playerRightLeg = document.getElementById("playerRightLeg");
+        const playerLeftLeg = document.getElementById("playerLeftLeg");
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // 初始位置
+        let playerX = 300;
+        let playerY = 300;
 
-        // 加载图片资源
-        const playerBody = new Image();
-        playerBody.src = "play_body.png";
+        function updatePosition() {
+            // 让身体在中心
+            playerBody.style.left = playerX + "px";
+            playerBody.style.top = playerY + "px";
 
-        const playerRightHand = new Image();
-        playerRightHand.src = "player_righthand.png";
+            // 计算各部位相对位置（基于锚点）
+            playerRightHand.style.left = (playerX + 14 - 20) + "px";
+            playerRightHand.style.top = (playerY + 13 - 25) + "px";
 
-        const playerLeftHand = new Image();
-        playerLeftHand.src = "player_lefthand.png";
+            playerLeftHand.style.left = (playerX + 19 - 20) + "px";
+            playerLeftHand.style.top = (playerY + 13 - 25) + "px";
 
-        const playerRightLeg = new Image();
-        playerRightLeg.src = "player_rightleg.png";
+            playerRightLeg.style.left = (playerX + 15 - 20) + "px";
+            playerRightLeg.style.top = (playerY + 20 - 25) + "px";
 
-        const playerLeftLeg = new Image();
-        playerLeftLeg.src = "player_leftleg.png";
-
-        let imagesLoaded = 0;
-        function checkImagesLoaded() {
-            imagesLoaded++;
-            if (imagesLoaded === 5) {
-                gameLoop();
-            }
+            playerLeftLeg.style.left = (playerX + 18 - 20) + "px";
+            playerLeftLeg.style.top = (playerY + 20 - 25) + "px";
         }
 
-        // 确保所有图片加载完成
-        playerBody.onload = checkImagesLoaded;
-        playerRightHand.onload = checkImagesLoaded;
-        playerLeftHand.onload = checkImagesLoaded;
-        playerRightLeg.onload = checkImagesLoaded;
-        playerLeftLeg.onload = checkImagesLoaded;
-
-        const player = {
-            x: 300,
-            y: 300,
-            width: 40,
-            height: 50,
-            speed: 5,
-            moving: false
-        };
-
-        let targetX = player.x;
-        let targetY = player.y;
-
-        canvas.addEventListener("click", function(event) {
-            const rect = canvas.getBoundingClientRect();
-            const clickX = event.clientX - rect.left;
-            const clickY = event.clientY - rect.top;
-
-            targetX = clickX + camera.x;
-            targetY = clickY + camera.y;
-            player.moving = true;
+        // 监听点击事件
+        document.addEventListener("click", function(event) {
+            playerX = event.clientX - 20;
+            playerY = event.clientY - 25;
+            updatePosition();
         });
 
-        const camera = {
-            x: 0,
-            y: 0,
-            update() {
-                camera.x = player.x - canvas.width / 2;
-                camera.y = player.y - canvas.height / 2;
-            }
-        };
-
-        function update() {
-            if (player.moving) {
-                const dx = targetX - player.x;
-                const dy = targetY - player.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance > player.speed) {
-                    player.x += (dx / distance) * player.speed;
-                    player.y += (dy / distance) * player.speed;
-                } else {
-                    player.x = targetX;
-                    player.y = targetY;
-                    player.moving = false;
-                }
-            }
-            camera.update();
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const drawX = player.x - camera.x;
-            const drawY = player.y - camera.y;
-
-            ctx.drawImage(playerLeftLeg, drawX + 18 - 20, drawY + 20 - 25, 20, 25);
-            ctx.drawImage(playerRightLeg, drawX + 15 - 20, drawY + 20 - 25, 20, 25);
-            ctx.drawImage(playerLeftHand, drawX + 19 - 20, drawY + 13 - 20, 20, 20);
-            ctx.drawImage(playerRightHand, drawX + 14 - 20, drawY + 13 - 20, 20, 20);
-            ctx.drawImage(playerBody, drawX - 20, drawY - 25, 40, 50);
-        }
-
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
+        // 初始化
+        updatePosition();
     </script>
 </body>
 </html>
