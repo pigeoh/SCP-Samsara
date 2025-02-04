@@ -9,6 +9,10 @@
             margin: 0;
             overflow: hidden;
             background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .player-part {
             position: absolute;
@@ -50,17 +54,25 @@
             playerBody.style.top = (center.y - 25) + "px"; // 25 是 playerBody 高度的一半
 
             // 计算各部位相对位置（基于锚点）
-            playerRightHand.style.left = (center.x + -2 - 20) + "px";
-            playerRightHand.style.top = (center.y + -3 - 25) + "px";
+            playerRightHand.style.left = (center.x + -2) + "px";
+            playerRightHand.style.top = (center.y + 1) + "px";
+            playerRightHand.style.transformOrigin = "14px 13px";
+            playerRightHand.style.transform = "rotate(0deg)";
 
-            playerLeftHand.style.left = (center.x + 3 - 20) + "px";
-            playerLeftHand.style.top = (center.y + -3 - 25) + "px";
+            playerLeftHand.style.left = (center.x + 3) + "px";
+            playerLeftHand.style.top = (center.y + 1) + "px";
+            playerLeftHand.style.transformOrigin = "19px 13px";
+            playerLeftHand.style.transform = "rotate(0deg)";
 
-            playerRightLeg.style.left = (center.x + -1 - 20) + "px";
-            playerRightLeg.style.top = (center.y + 4 - 25) + "px";
+            playerRightLeg.style.left = (center.x + -2) + "px";
+            playerRightLeg.style.top = (center.y - 7) + "px";
+            playerRightLeg.style.transformOrigin = "15px 20px";
+            playerRightLeg.style.transform = "rotate(0deg)";
 
-            playerLeftLeg.style.left = (center.x + 2 - 20) + "px";
-            playerLeftLeg.style.top = (center.y + 4 - 25) + "px";
+            playerLeftLeg.style.left = (center.x + 1) + "px";
+            playerLeftLeg.style.top = (center.y - 7) + "px";
+            playerLeftLeg.style.transformOrigin = "18px 30px";
+            playerLeftLeg.style.transform = "rotate(0deg)";
         }
 
         // 监听窗口大小变化事件
