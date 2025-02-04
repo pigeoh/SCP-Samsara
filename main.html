@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家移动跟随屏幕</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // 获取 Canvas 及其上下文
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // 设定 Canvas 尺寸
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 角色资源
+        const playerBody = new Image();
+        playerBody.src = "play_body.png";
+
+        const playerRightHand = new Image();
+        playerRightHand.src = "player_righthand.png";
+
+        const playerLeftHand = new Image();
+        playerLeftHand.src = "player_lefthand.png";
+
+        const playerRightLeg = new Image();
+        playerRightLeg.src = "player_rightleg.png";
+
+        const playerLeftLeg = new Image();
+        playerLeftLeg.src = "player_leftleg.png";
+
+        // 玩家对象
+        const player = {
+            x: 300,  // 初始位置
+            y: 300,
+            width: 40,  // 玩家整体大小
+            height: 50,
+            speed: 5,  // 移动速度
+            moving: false
+        };
+
+        // 目标移动位置
+        let targetX = player.x;
+        let targetY = player.y;
+
+        // 监听点击事件，设置目标位置
+        canvas.addEventListener("click", function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+
+            targetX = clickX + camera.x;
+            targetY = clickY + camera.y;
+            player.moving = true;
+        });
+
+        // 视角跟随系统
+        const camera = {
+            x: 0,
+            y: 0,
+            update() {
+                // 让玩家始终在屏幕中心
+                camera.x = player.x - canvas.width / 2;
+                camera.y = player.y - canvas.height / 2;
+            }
+        };
+
+        // 更新玩家位置
+        function update() {
+            if (player.moving) {
+                const dx = targetX - player.x;
+                const dy = targetY - player.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > player.speed) {
+                    player.x += (dx / distance) * player.speed;
+                    player.y += (dy / distance) * player.speed;
+                } else {
+                    player.x = targetX;
+                    player.y = targetY;
+                    player.moving = false;
+                }
+            }
+
+            // 更新摄像机
+            camera.update();
+        }
+
+        // 渲染游戏画面
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 计算绘制位置（相对摄像机）
+            const drawX = player.x - camera.x;
+            const drawY = player.y - camera.y;
+
+            // 绘制四肢（根据锚点）
+            ctx.drawImage(playerLeftLeg, drawX + 18 - 20, drawY + 20 - 25, 20, 25);
+            ctx.drawImage(playerRightLeg, drawX + 15 - 20, drawY + 20 - 25, 20, 25);
+            ctx.drawImage(playerLeftHand, drawX + 19 - 20, drawY + 13 - 20, 20, 20);
+            ctx.drawImage(playerRightHand, drawX + 14 - 20, drawY + 13 - 20, 20, 20);
+            ctx.drawImage(playerBody, drawX - 20, drawY - 25, 40, 50);
+        }
+
+        // 游戏循环
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // 资源加载完成后开始游戏
+        playerBody.onload = function() {
+            gameLoop();
+        };
+    </script>
+</body>
+</html>
